@@ -2,8 +2,38 @@
 
 (function() {
 
+    class Point {
+        /**
+         * @param {number} x
+         * @param {number} y
+         */
+        constructor(x, y) {
+            this._x = x;
+            this._y = y;
+        }
+
+        /**
+         * @returns {number}
+         */
+        get x() {
+            return this._x;
+        }
+
+        /**
+         * @returns {number}
+         */
+        get y() {
+            return this._y;
+        }
+    }
+
     class Line {
-        constructor(start, end, animationDuration) {
+        /**
+         * @param {Point} start
+         * @param {Point} end
+         * @param {number} animationDuration
+         */
+        constructor(start, end, animationDuration = 0) {
             this._start = start;
             this._end = end;
             this._animationTime = animationDuration;
@@ -11,43 +41,73 @@
             this.animationStartTime = 0;
         }
 
+        /**
+         * @returns {Point}
+         */
         get end() {
             return this._end;
         }
 
+        /**
+         * @returns {Point}
+         */
         get start() {
             return this._start;
         }
 
+        /**
+         * @returns {number}
+         */
         get deltaX() {
             return this.end.x - this.start.x;
         }
 
+        /**
+         * @returns {number}
+         */
         get deltaY() {
             return this.end.y - this.start.y;
         }
 
+        /**
+         * @returns {number}
+         */
         get slope() {
             return this.deltaY / this.deltaX;
         }
 
+        /**
+         * @returns {number}
+         */
         get yIntercept() {
             return -(this.slope * this.start.x - this.start.y);
         }
 
+        /**
+         * @returns {string}
+         */
         get slopeInterceptEquation() {
             // y = m * x + b
             return "y = " + this.slope + " * x + " + this.yIntercept;
         }
 
+        /**
+         * @returns {number}
+         */
         get animationTime() {
             return this._animationTime;
         }
 
+        /**
+         * @returns {boolean}
+         */
         get isDoneAnimating() {
             return this._isDoneAnimating;
         }
 
+        /**
+         * @param {boolean} value
+         */
         set isDoneAnimating(value) {
             this._isDoneAnimating = value;
         }
@@ -72,7 +132,7 @@
             let partialLine = this.getPartial(deltaTime / this.animationTime);
             partialLine.draw(ctx);
 
-            console.log(this.getFilledInSlopeInterceptEquation(partialLine.end.x, partialLine.end.y));
+            // console.log(this.getFilledInSlopeInterceptEquation(partialLine.end.x, partialLine.end.y));
         }
 
         /**
@@ -93,13 +153,18 @@
         getPartial(fraction) {
             return new Line(
                 this.start,
-                {
-                    x: this.start.x + this.deltaX * fraction,
-                    y: this.start.y + this.deltaY * fraction
-                }
+                new Point(
+                    this.start.x + this.deltaX * fraction,
+                    this.start.y + this.deltaY * fraction
+                )
             );
         }
 
+        /**
+         * @param {number} x
+         * @param {number} y
+         * @returns {string}
+         */
         getFilledInSlopeInterceptEquation(x, y) {
             return this.slopeInterceptEquation.replace('x', x).replace('y', y);
         }
@@ -114,12 +179,12 @@
     resizeCanvas(canvas);
 
     animateQueue.push(
-        new Line({x: 300, y: 300}, {x: 900, y: 500}, 1000)
+        new Line(new Point(300, 300), new Point(900, 500), 1000)
     );
 
-    // animateQueue.push(
-    //     new Line({x: 900, y: 500}, {x: 1500, y: 300}, 1000)
-    // );
+    animateQueue.push(
+        new Line(new Point(900, 500), new Point(1500, 300), 1000)
+    );
 
     window.requestAnimationFrame(render);
 
