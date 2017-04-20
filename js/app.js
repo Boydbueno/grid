@@ -114,7 +114,7 @@
     resizeCanvas(canvas);
 
     animateQueue.push(
-        new Line({x: 300, y: 300}, {x: 900, y: 500}, 10000)
+        new Line({x: 300, y: 300}, {x: 900, y: 500}, 1000)
     );
 
     // animateQueue.push(
@@ -126,7 +126,7 @@
     function render(timestamp) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        // drawGrid(canvas.clientWidth, canvas.clientHeight);
+        drawGrid(canvas.clientWidth, canvas.clientHeight);
 
         if (animateQueue.length > 0) {
             if (animateQueue[0].isDoneAnimating) {
@@ -175,20 +175,32 @@
             ctx.lineTo(width / 2 + nextLineOffset, height);
             ctx.stroke();
 
+            ctx.font = '10px serif';
+            ctx.fillStyle = "white";
+            ctx.textBaseline = 'middle';
+            ctx.textAlign = "center";
+            ctx.fillText(Math.round(nextLineOffset / lineInterval).toString(), width / 2 + nextLineOffset, height / 2 + 13);
+
             ctx.beginPath();
             ctx.moveTo(width / 2 - nextLineOffset, 0);
             ctx.lineTo(width / 2 - nextLineOffset, height);
             ctx.stroke();
+
+            ctx.fillText(Math.round(-nextLineOffset / lineInterval).toString(), width / 2 - nextLineOffset, height / 2 + 13);
 
             ctx.beginPath();
             ctx.moveTo(0, height / 2 + nextLineOffset);
             ctx.lineTo(width, height / 2 + nextLineOffset);
             ctx.stroke();
 
+            ctx.fillText(Math.round(-nextLineOffset / lineInterval).toString(), width / 2 - 13, height / 2 + nextLineOffset);
+
             ctx.beginPath();
             ctx.moveTo(0, height / 2 - nextLineOffset);
             ctx.lineTo(width, height / 2 - nextLineOffset);
             ctx.stroke();
+
+            ctx.fillText(Math.round(nextLineOffset / lineInterval).toString(), width / 2 - 13, height / 2 - nextLineOffset);
 
             nextLineOffset += lineInterval;
         }
