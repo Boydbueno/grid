@@ -143,7 +143,8 @@
          * @param {CanvasRenderingContext2D} ctx
          */
         draw(ctx) {
-            ctx.strokeStyle = '#2f2f2f';
+            ctx.strokeStyle = '#474747';
+            ctx.lineWidth = 2;
             ctx.beginPath();
             ctx.moveTo(this.start.toPixels.x, this.start.toPixels.y);
             ctx.lineTo(this.end.toPixels.x, this.end.toPixels.y);
