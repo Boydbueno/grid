@@ -25,6 +25,10 @@
         get y() {
             return this._y;
         }
+
+        get toPixels() {
+            return new Point(canvas.width / 2 + this.x * lineInterval, canvas.height / 2 - this.y * lineInterval);
+        }
     }
 
     class Line {
@@ -141,8 +145,8 @@
         draw(ctx) {
             ctx.strokeStyle = '#2f2f2f';
             ctx.beginPath();
-            ctx.moveTo(this.start.x, this.start.y);
-            ctx.lineTo(this.end.x, this.end.y);
+            ctx.moveTo(this.start.toPixels.x, this.start.toPixels.y);
+            ctx.lineTo(this.end.toPixels.x, this.end.toPixels.y);
             ctx.stroke();
         }
 
@@ -177,13 +181,13 @@
     let animateQueue = [];
 
     resizeCanvas(canvas);
+    let lineInterval;
+
 
     animateQueue.push(
-        new Line(new Point(300, 300), new Point(900, 500), 1000)
-    );
-
-    animateQueue.push(
-        new Line(new Point(900, 500), new Point(1500, 300), 1000)
+        new Line(new Point(0, 5), new Point(9, 5), 1000),
+        new Line(new Point(9, 5), new Point(9, 9), 1000),
+        new Line(new Point(9, 9), new Point(0, 5), 1000)
     );
 
     window.requestAnimationFrame(render);
@@ -228,7 +232,7 @@
 
         let largestSide = width > height ? width : height;
 
-        let lineInterval = largestSide / verticalLines;
+        lineInterval = largestSide / verticalLines;
 
         let nextLineOffset = lineInterval;
 
