@@ -176,13 +176,12 @@
 
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext('2d');
-
     let drawQueue = [];
     let animateQueue = [];
 
-    resizeCanvas(canvas);
     let lineInterval;
 
+    resizeCanvas(canvas);
 
     animateQueue.push(
         new Line(new Point(0, 5), new Point(9, 5), 1000),
@@ -274,6 +273,10 @@
             nextLineOffset += lineInterval;
         }
     }
+
+    window.addEventListener("resize", () => {
+        resizeCanvas(canvas);
+    });
 
     function resizeCanvas(canvas) {
         // Lookup the size the browser is displaying the canvas.
