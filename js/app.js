@@ -25,10 +25,6 @@
         get y() {
             return this._y;
         }
-
-        get toPixels() {
-            return new Point(canvas.width / 2 + this.x * lineInterval, canvas.height / 2 - this.y * lineInterval);
-        }
     }
 
     class Line {
@@ -146,8 +142,8 @@
             ctx.strokeStyle = '#474747';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(this.start.toPixels.x, this.start.toPixels.y);
-            ctx.lineTo(this.end.toPixels.x, this.end.toPixels.y);
+            ctx.moveTo(this.start.x, this.start.y);
+            ctx.lineTo(this.end.x, this.end.y);
             ctx.stroke();
         }
 
@@ -175,19 +171,115 @@
         }
     }
 
+    class Grid {
+
+        set height(value) {
+            this._height = value;
+        }
+
+        set width(value) {
+            this._width = value;
+        }
+
+        /**
+         * @param {number} maxSize
+         * @param {number} width
+         * @param {number} height
+         */
+        constructor(maxSize, width, height) {
+            this._maxSize = maxSize;
+            this._width = width;
+            this._height = height;
+
+            this.largestSide = this._width > this._height ? this._width : this._height;
+            this.lineInterval = this.largestSide / this._maxSize;
+        }
+
+        draw(ctx) {
+            ctx.strokeStyle = '#6a6a6a';
+            ctx.lineWidth = 1;
+
+            ctx.beginPath();
+            ctx.moveTo(this._width / 2, 0);
+            ctx.lineTo(this._width / 2, this._height);
+            ctx.stroke();
+
+            ctx.beginPath();
+            ctx.moveTo(0, this._height / 2);
+            ctx.lineTo(this._width, this._height / 2);
+            ctx.stroke();
+
+            let nextLineOffset = this.lineInterval;
+
+            while (nextLineOffset <= this.largestSide / 2) {
+                ctx.strokeStyle = '#2f2f2f';
+
+                ctx.beginPath();
+                ctx.moveTo(this._width / 2 + nextLineOffset, 0);
+                ctx.lineTo(this._width / 2 + nextLineOffset, this._height);
+                ctx.stroke();
+
+                ctx.font = '10px serif';
+                ctx.fillStyle = "white";
+                ctx.textBaseline = 'middle';
+                ctx.textAlign = "center";
+                ctx.fillText(Math.round(nextLineOffset / this.lineInterval).toString(), this._width / 2 + nextLineOffset, this._height / 2 + 13);
+
+                ctx.beginPath();
+                ctx.moveTo(this._width / 2 - nextLineOffset, 0);
+                ctx.lineTo(this._width / 2 - nextLineOffset, this._height);
+                ctx.stroke();
+
+                ctx.fillText(Math.round(-nextLineOffset / this.lineInterval).toString(), this._width / 2 - nextLineOffset, this._height / 2 + 13);
+
+                ctx.beginPath();
+                ctx.moveTo(0, this._height / 2 + nextLineOffset);
+                ctx.lineTo(this._width, this._height / 2 + nextLineOffset);
+                ctx.stroke();
+
+                ctx.fillText(Math.round(-nextLineOffset / this.lineInterval).toString(), this._width / 2 - 13, this._height / 2 + nextLineOffset);
+
+                ctx.beginPath();
+                ctx.moveTo(0, this._height / 2 - nextLineOffset);
+                ctx.lineTo(this._width, this._height / 2 - nextLineOffset);
+                ctx.stroke();
+
+                ctx.fillText(Math.round(nextLineOffset / this.lineInterval).toString(), this._width / 2 - 13, this._height / 2 - nextLineOffset);
+
+                nextLineOffset += this.lineInterval;
+            }
+        }
+
+        transformGridToScreen(point) {
+            return new Point(canvas.width / 2 + point.x * this.lineInterval, canvas.height / 2 - point.y * this.lineInterval);
+        }
+    }
+
     let canvas = document.getElementById('canvas');
     let ctx = canvas.getContext('2d');
     let drawQueue = [];
     let animateQueue = [];
 
-    let lineInterval;
+    let grid = new Grid(60, canvas.clientWidth, canvas.clientHeight);
 
     resizeCanvas(canvas);
 
     animateQueue.push(
-        new Line(new Point(0, 5), new Point(9, 5), 1000),
-        new Line(new Point(9, 5), new Point(9, 9), 1000),
-        new Line(new Point(9, 9), new Point(0, 5), 1000)
+        new Line(
+            grid.transformGridToScreen(new Point(0, 5)),
+            grid.transformGridToScreen(new Point(9, 5)),
+            1000
+        ),
+        new Line(
+            grid.transformGridToScreen(new Point(9, 5)),
+            grid.transformGridToScreen(new Point(9, 9)),
+            1000
+        ),
+        new Line(
+            grid.transformGridToScreen(new Point(9, 9)),
+            grid.transformGridToScreen(new Point(0, 5)),
+            1000
+        )
     );
 
     window.requestAnimationFrame(render);
@@ -195,7 +287,7 @@
     function render(timestamp) {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        drawGrid(canvas.clientWidth, canvas.clientHeight);
+        grid.draw(ctx);
 
         if (animateQueue.length > 0) {
             if (animateQueue[0].isDoneAnimating) {
@@ -214,69 +306,10 @@
         window.requestAnimationFrame(render);
     }
 
-    function drawGrid(width, height) {
-        ctx.strokeStyle = '#6a6a6a';
-        ctx.lineWidth = 1;
-
-        ctx.beginPath();
-        ctx.moveTo(width / 2, 0);
-        ctx.lineTo(width / 2, height);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(0, height / 2);
-        ctx.lineTo(width, height / 2);
-        ctx.stroke();
-
-        let verticalLines = 60;
-
-        let largestSide = width > height ? width : height;
-
-        lineInterval = largestSide / verticalLines;
-
-        let nextLineOffset = lineInterval;
-
-        while (nextLineOffset <= largestSide / 2) {
-            ctx.strokeStyle = '#2f2f2f';
-
-            ctx.beginPath();
-            ctx.moveTo(width / 2 + nextLineOffset, 0);
-            ctx.lineTo(width / 2 + nextLineOffset, height);
-            ctx.stroke();
-
-            ctx.font = '10px serif';
-            ctx.fillStyle = "white";
-            ctx.textBaseline = 'middle';
-            ctx.textAlign = "center";
-            ctx.fillText(Math.round(nextLineOffset / lineInterval).toString(), width / 2 + nextLineOffset, height / 2 + 13);
-
-            ctx.beginPath();
-            ctx.moveTo(width / 2 - nextLineOffset, 0);
-            ctx.lineTo(width / 2 - nextLineOffset, height);
-            ctx.stroke();
-
-            ctx.fillText(Math.round(-nextLineOffset / lineInterval).toString(), width / 2 - nextLineOffset, height / 2 + 13);
-
-            ctx.beginPath();
-            ctx.moveTo(0, height / 2 + nextLineOffset);
-            ctx.lineTo(width, height / 2 + nextLineOffset);
-            ctx.stroke();
-
-            ctx.fillText(Math.round(-nextLineOffset / lineInterval).toString(), width / 2 - 13, height / 2 + nextLineOffset);
-
-            ctx.beginPath();
-            ctx.moveTo(0, height / 2 - nextLineOffset);
-            ctx.lineTo(width, height / 2 - nextLineOffset);
-            ctx.stroke();
-
-            ctx.fillText(Math.round(nextLineOffset / lineInterval).toString(), width / 2 - 13, height / 2 - nextLineOffset);
-
-            nextLineOffset += lineInterval;
-        }
-    }
-
     window.addEventListener("resize", () => {
         resizeCanvas(canvas);
+        grid.width = canvas.clientWidth;
+        grid.height = canvas.clientHeight;
     });
 
     function resizeCanvas(canvas) {
