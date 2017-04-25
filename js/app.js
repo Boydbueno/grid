@@ -27,7 +27,15 @@
         }
     }
 
+    // Todo: The line should not know how to draw or animate. We should make a separate class to handle this
     class Line {
+        set lineWidth(value) {
+            this._lineWidth = value;
+        }
+
+        set lineColor(value) {
+            this._lineColor = value;
+        }
         /**
          * @param {Point} start
          * @param {Point} end
@@ -39,6 +47,9 @@
             this._animationTime = animationDuration;
             this._isDoneAnimating = animationDuration === 0;
             this.animationStartTime = 0;
+
+            this._lineColor = '#474747';
+            this._lineWidth = 1;
         }
 
         /**
@@ -138,12 +149,12 @@
         /**
          * @param {CanvasRenderingContext2D} ctx
          */
-        draw(ctx, transformMethod) {
-            let start = transformMethod(this.start);
-            let end = transformMethod(this.end);
+        draw(ctx, transformMethod = null) {
+            let start = transformMethod === null ? this.start : transformMethod(this.start);
+            let end = transformMethod === null ? this.end : transformMethod(this.end);
 
-            ctx.strokeStyle = '#474747';
-            ctx.lineWidth = 2;
+            ctx.strokeStyle = this._lineColor;
+            ctx.lineWidth = this._lineWidth;
             ctx.beginPath();
             ctx.moveTo(start.x, start.y);
             ctx.lineTo(end.x, end.y);
@@ -199,18 +210,8 @@
         }
 
         draw(ctx) {
-            ctx.strokeStyle = '#6a6a6a';
-            ctx.lineWidth = 1;
-
-            ctx.beginPath();
-            ctx.moveTo(this._width / 2, 0);
-            ctx.lineTo(this._width / 2, this._height);
-            ctx.stroke();
-
-            ctx.beginPath();
-            ctx.moveTo(0, this._height / 2);
-            ctx.lineTo(this._width, this._height / 2);
-            ctx.stroke();
+            this._drawYAxis(ctx);
+            this._drawXAxis(ctx);
 
             let nextLineOffset = this.lineInterval;
 
@@ -255,6 +256,26 @@
 
         transformGridToScreen(point) {
             return new Point(canvas.width / 2 + point.x * this.lineInterval, canvas.height / 2 - point.y * this.lineInterval);
+        }
+
+        _drawXAxis(ctx) {
+            let xAxis = new Line(
+                new Point(0, this._height / 2),
+                new Point(this._width, this._height / 2)
+            );
+            xAxis.lineColor = '#6a6a6a';
+            xAxis.lineWidth = 1;
+            xAxis.draw(ctx);
+        }
+
+        _drawYAxis(ctx) {
+            let yAxis = new Line(
+                new Point(this._width / 2, 0),
+                new Point(this._width / 2, this._height)
+            );
+            yAxis.lineColor = '#6a6a6a';
+            yAxis.lineWidth = 1;
+            yAxis.draw(ctx);
         }
     }
 
