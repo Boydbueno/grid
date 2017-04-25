@@ -116,7 +116,7 @@
          * @param {CanvasRenderingContext2D} ctx
          * @param {float} timestamp
          */
-        animate(ctx, timestamp) {
+        animate(ctx, timestamp, transformMethod) {
             if (this.animationStartTime === 0) {
                 this.animationStartTime = timestamp;
             }
@@ -130,7 +130,7 @@
             }
 
             let partialLine = this.getPartial(deltaTime / this.animationTime);
-            partialLine.draw(ctx);
+            partialLine.draw(ctx, transformMethod);
 
             // console.log(this.getFilledInSlopeInterceptEquation(partialLine.end.x, partialLine.end.y));
         }
@@ -138,12 +138,15 @@
         /**
          * @param {CanvasRenderingContext2D} ctx
          */
-        draw(ctx) {
+        draw(ctx, transformMethod) {
+            let start = transformMethod(this.start);
+            let end = transformMethod(this.end);
+
             ctx.strokeStyle = '#474747';
             ctx.lineWidth = 2;
             ctx.beginPath();
-            ctx.moveTo(this.start.x, this.start.y);
-            ctx.lineTo(this.end.x, this.end.y);
+            ctx.moveTo(start.x, start.y);
+            ctx.lineTo(end.x, end.y);
             ctx.stroke();
         }
 
@@ -265,21 +268,9 @@
     resizeCanvas(canvas);
 
     animateQueue.push(
-        new Line(
-            grid.transformGridToScreen(new Point(0, 5)),
-            grid.transformGridToScreen(new Point(9, 5)),
-            1000
-        ),
-        new Line(
-            grid.transformGridToScreen(new Point(9, 5)),
-            grid.transformGridToScreen(new Point(9, 9)),
-            1000
-        ),
-        new Line(
-            grid.transformGridToScreen(new Point(9, 9)),
-            grid.transformGridToScreen(new Point(0, 5)),
-            1000
-        )
+        new Line(new Point(0, 5), new Point(9, 5), 1000),
+        new Line(new Point(9, 5), new Point(9, 9), 1000),
+        new Line(new Point(9, 9), new Point(0, 5), 1000)
     );
 
     window.requestAnimationFrame(render);
@@ -293,13 +284,13 @@
             if (animateQueue[0].isDoneAnimating) {
                 drawQueue.push(animateQueue.shift());
             } else {
-                animateQueue[0].animate(ctx, timestamp);
+                animateQueue[0].animate(ctx, timestamp, grid.transformGridToScreen.bind(grid));
             }
         }
 
         if (drawQueue.length > 0) {
             drawQueue.forEach(drawItem => {
-                drawItem.draw(ctx);
+                drawItem.draw(ctx, grid.transformGridToScreen.bind(grid));
             });
         }
 
