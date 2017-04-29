@@ -69,7 +69,24 @@ export default class Grid {
     }
 
     transformGridToScreen(point) {
-        return new Point(this.width / 2 + point.x * this.lineInterval, this.height / 2 - point.y * this.lineInterval);
+        return new Point(
+            this.width / 2 + point.x * this.lineInterval,
+            this.height / 2 - point.y * this.lineInterval
+        );
+    }
+
+    transformScreenToGrid(point) {
+        return new Point(
+            (point.x - this.width / 2) / this.lineInterval,
+            (point.y - this.height / 2) / this.lineInterval * -1
+        );
+    }
+
+    roundGridPoint(point) {
+        return new Point(
+            Math.round(point.x),
+            Math.round(point.y)
+        )
     }
 
     drawXAxis(ctx) {
