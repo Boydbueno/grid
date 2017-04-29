@@ -4,15 +4,11 @@ import Line from "Line";
 export default class Grid {
 
     get height() {
-        return this._canvas.clientHeight;
+        return this.canvas.clientHeight;
     }
 
     get width() {
-        return this._canvas.clientWidth;
-    }
-
-    get canvas() {
-        return this._canvas;
+        return this.canvas.clientWidth;
     }
 
     /**
@@ -20,16 +16,16 @@ export default class Grid {
      * @param {Element} canvas
      */
     constructor(maxSize, canvas) {
-        this._maxSize = maxSize;
-        this._canvas = canvas;
+        this.maxSize = maxSize;
+        this.canvas = canvas;
 
         this.largestSide = this.width > this.height ? this.width : this.height;
-        this.lineInterval = this.largestSide / this._maxSize;
+        this.lineInterval = this.largestSide / this.maxSize;
     }
 
     draw(ctx) {
-        this._drawYAxis(ctx);
-        this._drawXAxis(ctx);
+        this.drawYAxis(ctx);
+        this.drawXAxis(ctx);
 
         let nextLineOffset = this.lineInterval;
 
@@ -73,10 +69,10 @@ export default class Grid {
     }
 
     transformGridToScreen(point) {
-        return new Point(this.canvas.width / 2 + point.x * this.lineInterval, this.canvas.height / 2 - point.y * this.lineInterval);
+        return new Point(this.width / 2 + point.x * this.lineInterval, this.height / 2 - point.y * this.lineInterval);
     }
 
-    _drawXAxis(ctx) {
+    drawXAxis(ctx) {
         let xAxis = new Line(
             new Point(0, this.height / 2),
             new Point(this.width, this.height / 2)
@@ -86,7 +82,7 @@ export default class Grid {
         xAxis.draw(ctx);
     }
 
-    _drawYAxis(ctx) {
+    drawYAxis(ctx) {
         let yAxis = new Line(
             new Point(this.width / 2, 0),
             new Point(this.width / 2, this.height)

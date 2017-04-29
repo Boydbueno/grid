@@ -2,41 +2,21 @@ import Point from "Point";
 
 // Todo: The line should not know how to draw or animate. We should make a separate class to handle this
 export default class Line {
-    set lineWidth(value) {
-        this._lineWidth = value;
-    }
 
-    set lineColor(value) {
-        this._lineColor = value;
-    }
     /**
      * @param {Point} start
      * @param {Point} end
      * @param {number} animationDuration
      */
     constructor(start, end, animationDuration = 0) {
-        this._start = start;
-        this._end = end;
-        this._animationTime = animationDuration;
-        this._isDoneAnimating = animationDuration === 0;
+        this.start = start;
+        this.end = end;
+        this.animationTime = animationDuration;
+        this.isDoneAnimating = animationDuration === 0;
         this.animationStartTime = 0;
 
-        this._lineColor = '#474747';
-        this._lineWidth = 1;
-    }
-
-    /**
-     * @returns {Point}
-     */
-    get end() {
-        return this._end;
-    }
-
-    /**
-     * @returns {Point}
-     */
-    get start() {
-        return this._start;
+        this.lineColor = '#474747';
+        this.lineWidth = 1;
     }
 
     /**
@@ -76,27 +56,6 @@ export default class Line {
     }
 
     /**
-     * @returns {number}
-     */
-    get animationTime() {
-        return this._animationTime;
-    }
-
-    /**
-     * @returns {boolean}
-     */
-    get isDoneAnimating() {
-        return this._isDoneAnimating;
-    }
-
-    /**
-     * @param {boolean} value
-     */
-    set isDoneAnimating(value) {
-        this._isDoneAnimating = value;
-    }
-
-    /**
      * @param {CanvasRenderingContext2D} ctx
      * @param {float} timestamp
      */
@@ -126,8 +85,8 @@ export default class Line {
         let start = transformMethod === null ? this.start : transformMethod(this.start);
         let end = transformMethod === null ? this.end : transformMethod(this.end);
 
-        ctx.strokeStyle = this._lineColor;
-        ctx.lineWidth = this._lineWidth;
+        ctx.strokeStyle = this.lineColor;
+        ctx.lineWidth = this.lineWidth;
         ctx.beginPath();
         ctx.moveTo(start.x, start.y);
         ctx.lineTo(end.x, end.y);

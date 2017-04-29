@@ -403,18 +403,18 @@ var Grid = function () {
     function Grid(maxSize, canvas) {
         _classCallCheck(this, Grid);
 
-        this._maxSize = maxSize;
+        this.maxSize = maxSize;
         this._canvas = canvas;
 
         this.largestSide = this.width > this.height ? this.width : this.height;
-        this.lineInterval = this.largestSide / this._maxSize;
+        this.lineInterval = this.largestSide / this.maxSize;
     }
 
     _createClass(Grid, [{
         key: "draw",
         value: function draw(ctx) {
-            this._drawYAxis(ctx);
-            this._drawXAxis(ctx);
+            this.drawYAxis(ctx);
+            this.drawXAxis(ctx);
 
             var nextLineOffset = this.lineInterval;
 
@@ -462,7 +462,7 @@ var Grid = function () {
             return new _Point2.default(this.canvas.width / 2 + point.x * this.lineInterval, this.canvas.height / 2 - point.y * this.lineInterval);
         }
     }, {
-        key: "_drawXAxis",
+        key: "drawXAxis",
         value: function _drawXAxis(ctx) {
             var xAxis = new _Line2.default(new _Point2.default(0, this.height / 2), new _Point2.default(this.width, this.height / 2));
             xAxis.lineColor = '#6a6a6a';
@@ -470,7 +470,7 @@ var Grid = function () {
             xAxis.draw(ctx);
         }
     }, {
-        key: "_drawYAxis",
+        key: "drawYAxis",
         value: function _drawYAxis(ctx) {
             var yAxis = new _Line2.default(new _Point2.default(this.width / 2, 0), new _Point2.default(this.width / 2, this.height));
             yAxis.lineColor = '#6a6a6a';
