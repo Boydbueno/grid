@@ -1,3 +1,4 @@
+import PointRenderer from "PointRenderer";
 import Point from 'Point';
 import Line from 'Line';
 import Grid from 'Grid';
@@ -9,6 +10,7 @@ export default class App {
         this.ctx = canvas.getContext('2d');
         this.drawList = [];
         this.animateQueue = [];
+        this.hoverPoint = null;
 
         this.grid = new Grid(60, canvas);
 
@@ -44,6 +46,11 @@ export default class App {
             });
         }
 
+        if (this.hoverPoint) {
+            let pointRenderer = new PointRenderer(this.hoverPoint);
+            pointRenderer.draw(this.ctx, this.grid.transformGridToScreen.bind(this.grid));
+        }
+
         window.requestAnimationFrame(this.render.bind(this));
     }
 
@@ -63,6 +70,15 @@ export default class App {
     addEventListeners() {
         window.addEventListener("resize", () => {
             this.resizeCanvas(this.canvas);
+        });
+
+        window.addEventListener("mousemove", event => {
+            let gridPoint = this.grid.transformScreenToGrid(new Point(event.clientX, event.clientY));
+            this.hoverPoint = this.grid.roundGridPoint(gridPoint);
+        });
+
+        window.addEventListener("mouseout", () => {
+            this.hoverPoint = null;
         });
     }
 }
