@@ -44,6 +44,7 @@ export default class Line {
      * @returns {number}
      */
     get yIntercept() {
+        // b = -(mx - y)
         return -(this.slope * this.start.x - this.start.y);
     }
 
@@ -51,8 +52,22 @@ export default class Line {
      * @returns {string}
      */
     get slopeInterceptEquation() {
-        // y = m * x + b
-        return "y = " + this.slope + " * x + " + this.yIntercept;
+
+        // Vertical line
+        // x = b
+        if (this.slope === Infinity) {
+            return "x = " + this.start.x;
+        }
+
+        // Horizontal line
+        // y = b
+        if (this.slope === 0) {
+            return "y = " + this.yIntercept;
+        }
+
+        // Diagonal line
+        // y = mx + b
+        return "[y] = " + this.slope.toFixed(1) + " * [x] + " + this.yIntercept.toFixed(1);
     }
 
     /**
@@ -108,11 +123,11 @@ export default class Line {
     }
 
     /**
-     * @param {number} x
-     * @param {number} y
+     * @param {number|string} x
+     * @param {number|string} y
      * @returns {string}
      */
     getFilledInSlopeInterceptEquation(x, y) {
-        return this.slopeInterceptEquation.replace('x', x).replace('y', y);
+        return this.slopeInterceptEquation.replace('[x]', x.toFixed(1)).replace('[y]', y.toFixed(1));
     }
 }
