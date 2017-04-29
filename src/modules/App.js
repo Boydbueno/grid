@@ -7,7 +7,7 @@ export default class App {
     constructor(canvas) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
-        this.drawQueue = [];
+        this.drawList = [];
         this.animateQueue = [];
 
         this.grid = new Grid(60, canvas);
@@ -32,14 +32,14 @@ export default class App {
 
         if (this.animateQueue.length > 0) {
             if (this.animateQueue[0].isDoneAnimating) {
-                this.drawQueue.push(this.animateQueue.shift());
+                this.drawList.push(this.animateQueue.shift());
             } else {
                 this.animateQueue[0].animate(this.ctx, timestamp, this.grid.transformGridToScreen.bind(this.grid));
             }
         }
 
-        if (this.drawQueue.length > 0) {
-            this.drawQueue.forEach(drawItem => {
+        if (this.drawList.length > 0) {
+            this.drawList.forEach(drawItem => {
                 drawItem.draw(this.ctx, this.grid.transformGridToScreen.bind(this.grid));
             });
         }
