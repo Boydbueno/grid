@@ -46,13 +46,7 @@ export default class App {
 
         this.grid.draw(this.ctx);
 
-        if (this.animateQueue.length > 0) {
-            if (this.animateQueue[0].isDoneAnimating) {
-                this.drawList.push(this.animateQueue.shift());
-            } else {
-                this.animateQueue[0].animate(this.ctx, timestamp, this.grid.transformGridToScreen.bind(this.grid));
-            }
-        }
+        this.handleAnimationQueue(timestamp);
 
         if (this.drawList.length > 0) {
             this.drawList.forEach(drawItem => {
@@ -66,6 +60,19 @@ export default class App {
         }
 
         window.requestAnimationFrame(this.render.bind(this));
+    }
+
+    handleAnimationQueue(timestamp) {
+        if (this.animateQueue.length === 0) {
+            return;
+        }
+
+        if (this.animateQueue[0].isDoneAnimating) {
+            this.drawList.push(this.animateQueue.shift());
+            return;
+        }
+
+        this.animateQueue[0].animate(this.ctx, timestamp, this.grid.transformGridToScreen.bind(this.grid));
     }
 
     resizeCanvas(canvas) {
