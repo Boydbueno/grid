@@ -1,3 +1,4 @@
+import LineRenderer from "LineRenderer";
 import Point from "Point";
 import Line from "Line";
 
@@ -90,9 +91,11 @@ export default class Grid {
     }
 
     drawXAxis(ctx) {
-        let xAxis = new Line(
-            new Point(0, this.height / 2),
-            new Point(this.width, this.height / 2)
+        let xAxis = new LineRenderer(
+            new Line(
+                new Point(0, this.height / 2),
+                new Point(this.width, this.height / 2)
+            )
         );
         xAxis.lineColor = '#6a6a6a';
         xAxis.lineWidth = 1;
@@ -100,9 +103,11 @@ export default class Grid {
     }
 
     drawYAxis(ctx) {
-        let yAxis = new Line(
-            new Point(this.width / 2, 0),
-            new Point(this.width / 2, this.height)
+        let yAxis = new LineRenderer(
+            new Line(
+                new Point(this.width / 2, 0),
+                new Point(this.width / 2, this.height)
+            )
         );
         yAxis.lineColor = '#6a6a6a';
         yAxis.lineWidth = 1;

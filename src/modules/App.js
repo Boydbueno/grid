@@ -1,4 +1,5 @@
 import PointRenderer from "PointRenderer";
+import LineRenderer from "LineRenderer";
 import Point from 'Point';
 import Line from 'Line';
 import Grid from 'Grid';
@@ -16,10 +17,23 @@ export default class App {
 
         this.resizeCanvas(canvas);
 
+        let lineRenderer = new LineRenderer(
+            new Line(
+                new Point(0, 5),
+                new Point(9, 5)
+            ),
+            {
+                animate: {
+                    duration: 1000
+                }
+            }
+        );
+
         this.animateQueue.push(
-            new Line(new Point(0, 5), new Point(9, 5), 1000),
-            new Line(new Point(9, 5), new Point(9, 9), 1000),
-            new Line(new Point(9, 9), new Point(0, 5), 1000)
+            lineRenderer
+            // new Line(new Point(0, 5), new Point(9, 5), 1000),
+            // new Line(new Point(9, 5), new Point(9, 9), 1000),
+            // new Line(new Point(9, 9), new Point(0, 5), 1000)
         );
 
         window.requestAnimationFrame(this.render.bind(this));
